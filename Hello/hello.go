@@ -2,9 +2,16 @@ package main //Cria biblioteca
 
 import (
 	"Net/http" //Importa biblioteca Net/http
+	"bufio"    //Importando  biblioteca bufio
 	"fmt"      //Importa biblioteca fmt
-	"os"       //Importa biblioteca de os
+	"io"
+	"os" //Importa biblioteca de os
+	"strings"
+	"time" //Importando  biblioteca time
 )
+
+const monitoramentos = 3
+const delay = 5
 
 func main() { //Criando função principal
 	for { //Faz com que se repita infinitamente
@@ -64,14 +71,58 @@ func LeComando() int { //Cria funcao de ler comando
 	return comandoLido //Dando retorno pois é uma função que exige retornar valores
 }
 
-func IniciarMonitoramento() {
+func IniciarMonitoramento() { //Cria função de monitoramento
 	fmt.Println("Monitorando.......") //Imprimindo na tela
-	site := "https://www.youtube.com" //Atribuindo site a variável
-	resp, _ := http.Get(site)         //Pegando resposta http do site e atribuindo a variável
+
+	sites := leSiteDoArquivo()            //Chamando função de ler site do arquivo e atribuindo a variável sites
+	for i := 0; i < monitoramentos; i++ { //Quantas vezes se deve monitorar
+		for i, site := range sites { //Percorrendo meu slice
+			fmt.Println("Testando site", i, ":", site) //Imprimindo na tela
+			testaSite(site)                            //Chamando função de testar site
+		}
+		time.Sleep(delay * time.Second) //Definindo tempo entre cada ação do for
+		fmt.Println("")
+	}
+
+	fmt.Println("") //Imprimindo na tela espaços
+}
+
+func testaSite(site string) { //Criando função de testar site
+	resp, err := http.Get(site) //Pegando resposta http do site e atribuindo a variável
+
+	if err != nil { //Se houver erro faça
+		fmt.Println("Ocorreu um erro:", err) //Imprime na tela mensagem de erro
+	}
 
 	if resp.StatusCode == 200 { //Verifica se acesso ao site teve exito
 		fmt.Println("Site:", site, "foi carregado com sucesso!") //Imprime na tela que sim
 	} else { //Se não faz
 		fmt.Println("Site:", site, "está com problemas. Status code:", resp.StatusCode) //Imprime na tela que deu erro e imprime o statuscode do site
 	}
+}
+
+func leSiteDoArquivo() []string { //Criando função leSiteDoArquivo
+	var sites []string //Chamando var sites
+
+	arquivo, err := os.Open("sites.txt") //Abrindo arquivo de sites e atribuindo a arquivo
+
+	if err != nil { //Se houver erro faça
+		fmt.Println("Ocorreu um erro:", err) //Imprime na tela mensagem de erro
+	}
+
+	leitor := bufio.NewReader(arquivo) //Lê linha a linha do arquivo de texto e atribue a variável leitor
+
+	for { //Criando laço for de repetição
+		linha, err := leitor.ReadString('\n') //Fazendo leitura individual de cada linha
+		linha = strings.TrimSpace(linha)      //Tirando os \n
+		sites = append(sites, linha)          //Atribuindo strings a slice
+
+		if err == io.EOF { //Se for fim de arquivo
+			break //Saia do loop for
+		}
+	}
+
+	arquivo.Close() //Feche o arquivo aberto a cima(Questão de boa prática)
+
+	return sites //Retornando sites
 }
