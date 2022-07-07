@@ -1,7 +1,9 @@
-package main  //Chamando pacote
+package main //Chamando pacote
 
-import "fmt" //Importando bibliotecas
-import "os"
+import (
+	"fmt"
+	"os"
+) //Importando bibliotecas
 
 func main() { //Função main
 	var x, y, resultado, op int //Criando variáveis 
@@ -30,7 +32,7 @@ func main() { //Função main
 		fmt.Println("Digite o segundo número: ") //Imprima na tela
 		fmt.Scan(&y) //Leia input
 		resultado = x - y //Faz subtração e atribui a resultado
-		fmt.Printf("O resultado desta soma é: %v", resultado)
+		fmt.Printf("O resultado desta subtração é: %v", resultado)
 	case 3: //Caso seja 3 faça
 		fmt.Println("Ok encerrando programa....") //Imprima na tela
 		os.Exit(0)  //Fecha programa com exito
