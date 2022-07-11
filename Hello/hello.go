@@ -5,7 +5,9 @@ import (
 	"bufio"    //Importando  biblioteca bufio
 	"fmt"      //Importa biblioteca fmt
 	"io"
-	"os" //Importa biblioteca de os
+	"io/ioutil"
+	"os"      //Importa biblioteca de os
+	"strconv" //Importando biblioteca strconv
 	"strings"
 	"time" //Importando  biblioteca time
 )
@@ -36,6 +38,7 @@ func main() { //Criando função principal
 			IniciarMonitoramento() //Chamando função
 		case 2: //Caso seja 2 faça
 			fmt.Println("Exibindo logs.....") //Imprime na tela
+			imprimeLogs() //Chamando função de imprimir logs
 		case 0: //Caso seja 0 faça
 			fmt.Println("Saindo do programa....") //Imprime na tela
 			os.Exit(0)                            //Sai do programa sem erro
@@ -96,8 +99,10 @@ func testaSite(site string) { //Criando função de testar site
 
 	if resp.StatusCode == 200 { //Verifica se acesso ao site teve exito
 		fmt.Println("Site:", site, "foi carregado com sucesso!") //Imprime na tela que sim
+		registraLog(site, true)                                  //Chamando função como true
 	} else { //Se não faz
 		fmt.Println("Site:", site, "está com problemas. Status code:", resp.StatusCode) //Imprime na tela que deu erro e imprime o statuscode do site
+		registraLog(site, false)                                                        //Chamando função como false
 	}
 }
 
@@ -125,4 +130,29 @@ func leSiteDoArquivo() []string { //Criando função leSiteDoArquivo
 	arquivo.Close() //Feche o arquivo aberto a cima(Questão de boa prática)
 
 	return sites //Retornando sites
+}
+
+func registraLog(site string, status bool) { //Criando função de registrar log que recebe como parâmetro site e status
+	arquivo, err := os.OpenFile("log.txt", os.O_CREATE|os.O_RDWR|os.O_APPEND, 0666) //Arquivo recebe um open file de log.txt que é criado na hora se necessário
+
+	if err != nil { //Se obtiver erro faça
+		fmt.Println("Ocorreu um erro:", err) //Imprima o tipo de erro que aconteceu
+	}
+
+	fmt.Println(arquivo) //Imprima a log
+
+	arquivo.WriteString(time.Now().Format("02/01/2006 15:04:05") + " - " + site + "- online: " + strconv.FormatBool(status) + "\n") //Escreve os dados no arquivo log
+
+	arquivo.Close() //Fechando arquivo
+}
+
+func imprimeLogs() {  //Criando função de imprimir logs
+
+	arquivo, err := ioutil.ReadFile("log.txt")  //Lê os dados de log.txt e passa para arquivo
+
+	if err != nil {  //Se for diferente de nulo faça
+		fmt.Println("Ocorreu um erro:", err)  //Imprime qual erro ocorreu
+	}
+
+	fmt.Println(string(arquivo))  //Imprime a log na tela
 }
