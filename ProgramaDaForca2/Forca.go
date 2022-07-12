@@ -10,63 +10,39 @@ import (  //Importando bibliotecas
 	"io"
 
 )
-
-func contem(s string, caracteres []string) bool {  //Criando função pra verificar se contem
-	for _, ca := range s {  //Percorrendo s com ca
-		for _, ca2 := range caracteres {  //Percorrendo caracteres que foi recebido como parametro por ca2
-			if string(ca) == ca2 {  //Fazendo uma comparação
-				return true  //Retornando verdadeiro
-			}
-		}
-	}
-	return false  //Retornando falso
-}
-
-func entrada(strings []string, separator string) string {  //Função que recebe entrada
-	if len(strings) == 0 {  //Verifica se tamanho das strings é igual a 0
-		return ""  //Retorna string vazia
-	}
-	s := ""   //Atribue vazio a s
-	ultimoIdx := len(strings) - 1 //Verifica qual é o último index
-	for _, v := range strings[0:ultimoIdx] {  //Percorre o slice strings com v
-		s += v + separator  //Vai concatenando
-	}
-	return s + strings[ultimoIdx]  //Retorne a string
-}
-
 func main() {  //Função principal
-	t := time.Now()  //Atribue tempo de agora
-	rand.Seed(t.UnixNano())  //Gera um seed aleatória a cada nano segundo
-	palavra_escolhida := escolhePalavra()  //Atribue palavra escolhida para a variável
-	nGuesses := len(palavra_escolhida)  //Pegando tamanho da palavra e atribuindo a nGuesses
+	tempoAgora := time.Now()  //Atribue tempo de agora
+	rand.Seed(tempoAgora.UnixNano())  //Gera um seed aleatória a cada nano segundo
+	palavraEscolhida := escolhePalavra()  //Atribue palavra escolhida para a variável
+	chances := len(palavraEscolhida)  //Pegando tamanho da palavra e atribuindo a nGuesses
 	encontrado := []string{} //Criando slice de encontrado
 
-	for i := 0; i < len(palavra_escolhida); i++ {  //Criando laço de repetição
+	for i := 0; i < len(palavraEscolhida); i++ {  //Criando laço de repetição
 		encontrado = append(encontrado, "_") //Vai adicionando _ _ _ _ a tela do usuário
 	}
-	for nGuesses > 0 {  //Para tamanho da palavra maior que zero
-		fmt.Println("Você tem", nGuesses, "Chances sobrando!")  //Mostra número de chances sobrando
+	for chances > 0 {  //Para tamanho da palavra maior que zero
+		fmt.Println("Você tem", chances, "Chances sobrando!")  //Mostra número de chances sobrando
 		letra, err := pegaLetra(encontrado)  //Chamando função de pegar letra e atribuindo a letra
 		if err != nil {  //Se for nulo faça
 			fmt.Println("Erro de leitura no console!")  //Imprime erro na tela
 			return
 		}
-		if !contem(palavra_escolhida, []string{letra}) {  //Se palavra_escolhida não estiver contida em string letras faça
-			nGuesses--  //Diminue nGuesses
+		if !contem(palavraEscolhida, []string{letra}) {  //Se palavraEscolhida não estiver contida em string letras faça
+			chances--  //Diminue nGuesses
 		}
-		if atualizandoEncontrado(encontrado, palavra_escolhida, letra) {  //Se encontrar palavra escolhida
-			fmt.Println("Você ganhou ganhou! a palavra era:", palavra_escolhida)  //Imprime na tela
+		if atualizandoEncontrado(encontrado, palavraEscolhida, letra) {  //Se encontrar palavra escolhida
+			fmt.Println("Você ganhou ganhou! a palavra era:", palavraEscolhida)  //Imprime na tela
 			return  //Da retorno
 		}
 	}
-	fmt.Println("Você perdeu! a palavra era:", palavra_escolhida)  //Imprime na tela
+	fmt.Println("Você perdeu! a palavra era:", palavraEscolhida)  //Imprime na tela
 }
 
 func pegaLetra(encontrou []string) (string, error) {  //Criando função de pegar letra
 	ALFABETO := "aáàãbcçdeéêfghiíîjklmnoôõópqrstuúvwxyz"  //Atribuindo alfabeto
 
 	for true {  //Laço de retição infinito
-		letra, err := prompt("Escolha uma letra:", entrada(encontrou, " "))  //Recebe input do usuário e atribue a letra
+		letra, err := leInput("Escolha uma letra:", entrada(encontrou, " "))  //Recebe input do usuário e atribue a letra
 		if err != nil {  //Se erro for diferente de nulo faça
 			return "", err  //Retorne erro
 		}
@@ -125,11 +101,11 @@ func abreArquivo() []string {   //Criando função de abrir arquivo
 func escolhePalavra() string{  //Criando função de escolher palavras
 	conteudo := abreArquivo()  //Atribue retorno da função abre_arquivo() a conteudo
 	indexAleatorio := rand.Intn(len(conteudo))  //Randomizando o conteudo
-	escolha2 := conteudo[indexAleatorio]  //Fazendo um escolha2 aleatorio 
-	return escolha2   //Retornando escolha2
+	escolha := conteudo[indexAleatorio]  //Fazendo um escolha2 aleatorio 
+	return escolha   //Retornando escolha2
 }
 
-func prompt(vals ...interface{}) (string, error) {  //Criando função de prompt
+func leInput(vals ...interface{}) (string, error) {  //Criando função de leInput
 	if len(vals) != 0 {  //Se tamanho de vals for diferente de zero faça
 		fmt.Println(vals...)  //imprima vals
 	}
@@ -141,4 +117,29 @@ func prompt(vals ...interface{}) (string, error) {  //Criando função de prompt
 	}
 	
 	return leitura.Text(), nil  //Retorna o texto scanneado e nil se tiver
+}
+
+
+func contem(valor1 string, caracteres []string) bool {  //Criando função pra verificar se contem
+	for _, ca := range valor1 {  //Percorrendo valor1 com ca
+		for _, ca2 := range caracteres {  //Percorrendo caracteres que foi recebido como parametro por ca2
+			if string(ca) == ca2 {  //Fazendo uma comparação
+				return true  //Retornando verdadeiro
+			}
+		}
+	}
+	return false  //Retornando falso
+}
+
+
+func entrada(strings []string, separador string) string {  //Função que recebe entrada
+	if len(strings) == 0 {  //Verifica se tamanho das strings é igual a 0
+		return ""  //Retorna string vazia
+	}
+	s := ""   //Atribue vazio a s
+	ultimoIdx := len(strings) - 1 //Verifica qual é o último index
+	for _, v := range strings[0:ultimoIdx] {  //Percorre o slice strings com v
+		s += v + separador  //Vai concatenando
+	}
+	return s + strings[ultimoIdx]  //Retorne a string
 }
