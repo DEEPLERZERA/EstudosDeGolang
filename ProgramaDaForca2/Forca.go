@@ -11,7 +11,7 @@ import (  //Importando bibliotecas
 
 )
 
-func contains(s string, caracteres []string) bool {  //Criando função pra verificar se contem
+func contem(s string, caracteres []string) bool {  //Criando função pra verificar se contem
 	for _, ca := range s {  //Percorrendo s com ca
 		for _, ca2 := range caracteres {  //Percorrendo caracteres que foi recebido como parametro por ca2
 			if string(ca) == ca2 {  //Fazendo uma comparação
@@ -37,7 +37,7 @@ func entrada(strings []string, separator string) string {  //Função que recebe
 func main() {  //Função principal
 	t := time.Now()  //Atribue tempo de agora
 	rand.Seed(t.UnixNano())  //Gera um seed aleatória a cada nano segundo
-	palavra_escolhida := escolhe_palavra()  //Atribue palavra escolhida para a variável
+	palavra_escolhida := escolhePalavra()  //Atribue palavra escolhida para a variável
 	nGuesses := len(palavra_escolhida)  //Pegando tamanho da palavra e atribuindo a nGuesses
 	encontrado := []string{} //Criando slice de encontrado
 
@@ -51,10 +51,10 @@ func main() {  //Função principal
 			fmt.Println("Erro de leitura no console!")  //Imprime erro na tela
 			return
 		}
-		if !contains(palavra_escolhida, []string{letra}) {  //Se palavra_escolhida não estiver contida em string letras faça
+		if !contem(palavra_escolhida, []string{letra}) {  //Se palavra_escolhida não estiver contida em string letras faça
 			nGuesses--  //Diminue nGuesses
 		}
-		if AtualizandoEncontrado(encontrado, palavra_escolhida, letra) {  //Se encontrar palavra escolhida
+		if atualizandoEncontrado(encontrado, palavra_escolhida, letra) {  //Se encontrar palavra escolhida
 			fmt.Println("Você ganhou ganhou! a palavra era:", palavra_escolhida)  //Imprime na tela
 			return  //Da retorno
 		}
@@ -70,7 +70,7 @@ func pegaLetra(encontrou []string) (string, error) {  //Criando função de pega
 		if err != nil {  //Se erro for diferente de nulo faça
 			return "", err  //Retorne erro
 		}
-		if len(letra) == 1 && contains(ALFABETO, []string{letra}) {  //Condicional que verifica se está tudo certo com a letra entregue pelo usuário
+		if len(letra) == 1 && contem(ALFABETO, []string{letra}) {  //Condicional que verifica se está tudo certo com a letra entregue pelo usuário
 			return letra, nil  //Retorna letra
 		}
 		fmt.Println("Input invalido: Tente com uma única letra minúsucula!")  //Se não imprime input invalido
@@ -80,7 +80,7 @@ func pegaLetra(encontrou []string) (string, error) {  //Criando função de pega
 }
 
 
-func AtualizandoEncontrado(encontrado []string, palavra string, letra string) bool {  //Criando função de atualizar encontrado
+func atualizandoEncontrado(encontrado []string, palavra string, letra string) bool {  //Criando função de atualizar encontrado
 	completo := true   //Completo passa a ser true
 	for i, r := range palavra {  //Percorrendo palavra com r faça
 		if letra == string(r) {  //Se letra for igual a r faça
@@ -95,7 +95,7 @@ func AtualizandoEncontrado(encontrado []string, palavra string, letra string) bo
 }
 
 
-func abre_arquivo() []string {   //Criando função de abrir arquivo
+func abreArquivo() []string {   //Criando função de abrir arquivo
 	var palavras []string //Chamando var palavras
 
 	arquivo, err := os.Open("palavras.txt") //Abrindo arquivo de palavras e atribuindo a arquivo
@@ -122,23 +122,23 @@ func abre_arquivo() []string {   //Criando função de abrir arquivo
 }
 
 
-func escolhe_palavra() string{  //Criando função de escolher palavras
-	conteudo := abre_arquivo()  //Atribue retorno da função abre_arquivo() a conteudo
-	randomIndex := rand.Intn(len(conteudo))  //Randomizando o conteudo
-	pick := conteudo[randomIndex]  //Fazendo um pick aleatorio 
-	return pick   //Retornando pick
+func escolhePalavra() string{  //Criando função de escolher palavras
+	conteudo := abreArquivo()  //Atribue retorno da função abre_arquivo() a conteudo
+	indexAleatorio := rand.Intn(len(conteudo))  //Randomizando o conteudo
+	escolha2 := conteudo[indexAleatorio]  //Fazendo um escolha2 aleatorio 
+	return escolha2   //Retornando escolha2
 }
 
 func prompt(vals ...interface{}) (string, error) {  //Criando função de prompt
 	if len(vals) != 0 {  //Se tamanho de vals for diferente de zero faça
 		fmt.Println(vals...)  //imprima vals
 	}
-	scanner := bufio.NewScanner(os.Stdin)  //Scanner recebe bufio.NewScanner
-	scanner.Scan()  //Vai lendo input
-	err := scanner.Err()   //Se tiver erro atribue a err
+	leitura := bufio.NewScanner(os.Stdin)  //leitura recebe bufio.NewScanner
+	leitura.Scan()  //Vai lendo input
+	err := leitura.Err()   //Se tiver erro atribue a err
 	if err != nil {  //Se tiver erro
 		return "", err  //Imprime erro
 	}
 	
-	return scanner.Text(), nil  //Retorna o texto scanneado e nil se tiver
+	return leitura.Text(), nil  //Retorna o texto scanneado e nil se tiver
 }
