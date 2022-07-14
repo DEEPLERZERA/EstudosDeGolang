@@ -9,8 +9,8 @@ import ( //Importando bibliotecas
 func main() { //Chamando função principal
 
 	models.Personalidades = []models.Personalidade{ //Atribuindo dados ao nosso slice de personalidades
-		{Nome: "Nome1", Historia: "Historia1"},
-		{Nome: "Nome2", Historia: "Historia2"},
+		{Id: 1,Nome: "Nome1", Historia: "Historia1"},
+		{Id: 2,Nome: "Nome2", Historia: "Historia2"},
 	}
 
 	fmt.Println("Iniciando nossa api rest com go") //Imprimindo na tela
