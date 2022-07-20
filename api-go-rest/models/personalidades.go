@@ -1,7 +1,7 @@
-package models //Importando pacote models
+package models //Definindo pacote models
 
 type Personalidade struct { //Criando estrutura de dados
-	Id       int    `json:"id"`
+	Id       int    `json:"id"`  
 	Nome     string `json:"nome"`
 	Historia string `json:"historia"`
 }

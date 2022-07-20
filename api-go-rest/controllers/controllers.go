@@ -34,6 +34,7 @@ func RetornaUmaPersonalidade(w http.ResponseWriter, r *http.Request) {
 
 //CRIANDO FUNÇÃO QUE CRIA PERSONALIDADES
 func CriaUmaNovaPersonalidade(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusCreated) //Troca status code para 201 significando que foi criado com sucesso
 	var novaPersonalidade models.Personalidade
 	json.NewDecoder(r.Body).Decode(&novaPersonalidade) //Recebe dados
 	database.DB.Create(&novaPersonalidade)             //Criando BD
@@ -55,8 +56,19 @@ func EditaPersonalidade(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id := vars["id"]
 	var personalidade models.Personalidade
-	database.DB.First(&personalidade, id) //Edita personalidades
+	database.DB.First(&personalidade, id) //Busca personalidade no banco pelo ID
 	json.NewDecoder(r.Body).Decode(&personalidade)
-	database.DB.Save(&personalidade) //Salva o banco de dados
+	database.DB.Save(&personalidade) //Salva o banco de dados(UPDATE)
+	json.NewEncoder(w).Encode(personalidade)
+}
+
+//CRIANDO FUNÇÃO QUE EDITA APENAS UM DADO DA PERSONALIDADE
+func EditaDadoUnicoPersonalidade(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	id := vars["id"]
+	var personalidade models.Personalidade
+	database.DB.First(&personalidade, id) //Busca personalidade no banco pelo ID
+	json.NewDecoder(r.Body).Decode(&personalidade)
+	database.DB.Save(&personalidade) //Salva o banco de dados(UPDATE)
 	json.NewEncoder(w).Encode(personalidade)
 }
